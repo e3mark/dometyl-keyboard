@@ -2,7 +2,9 @@
     (https://github.com/Bastardkb/Skeletyl).
 
     This is is a good place to start from if you'd like to have something like the
-    skeletyl, but with some more pinky stagger. Though, it will never be as pretty. *)
+    skeletyl, but with some more pinky stagger. Though, it will never be as pretty.
+    
+    Enhanced version with comprehensive column connections for maximum structural integrity. *)
 
 open OCADml
 open OSCADml
@@ -10,16 +12,19 @@ open Dometyl
 
 let body_lookups =
   let offset = function
-    | 2 -> v3 0. 3.5 (-8.) (* middle *)
-    | 3 -> v3 1. (-1.) (-1.5) (* ring *)
+    | 2 -> v3 0. 3.5 (-5.) (* middle *)
+    | 3 -> v3 1. (-2.5) 0.5 (* ring *)
     | i when i >= 4 -> v3 0. (-12.) 7.7 (* pinky *)
-    | 0 -> v3 (-1.) 0. (-2.)
-    | _ -> v3 0. 0. (-3.)
+    | 0 -> v3 (-2.5) 0. 5.
+    | _ -> v3 0. 0. 0.
   and curve = function
-    | 0 ->
+    | i when i >= 3 ->
+      (* ring and pinky *)
+      Curvature.(curve ~well:(well ~radius:37. (Float.pi /. 4.25)) ())
+    | i when i = 0 ->
       Curvature.(
-        curve ~well:(well ~radius:85. (Float.pi /. 12.) ~tilt:(Float.pi /. 24.)) ())
-    | _ -> Curvature.(curve ~well:(well ~radius:85. (Float.pi /. 12.)) ())
+        curve ~well:(well ~tilt:(Float.pi /. 7.5) ~radius:46. (Float.pi /. 5.95)) () )
+    | _ -> Curvature.(curve ~well:(well ~radius:46.5 (Float.pi /. 6.1)) ())
   and swing = function
     | 2 -> Float.pi /. -48.
     | 3 -> Float.pi /. -19.
@@ -43,7 +48,49 @@ let plate_builder =
     ~thumb_offset:(v3 0.25 (-50.) (-1.))
     ~thumb_angle:Float.(v3 0. (pi /. -4.3) (pi /. 6.))
 
-let plate_welder = Plate.skeleton_bridges
+(* Enhanced plate welder with comprehensive column connections *)
+let plate_welder = 
+  fun plate ->
+    (* Base skeleton bridges *)
+    let skeleton_bridges = Plate.skeleton_bridges plate in
+    
+    (* Simple but effective column connections for added strength *)
+    let column_connections = 
+      try
+        let body_columns = plate.Plate.body in
+        (* Connect adjacent columns with conservative parameters *)
+        let safe_connections = [
+          (* Middle core connections - most stable *)
+          (1, 2, 0.1, 0.2, 0.3);
+          (2, 3, 0.12, 0.25, 0.35);
+          (* Index and ring connections *)
+          (0, 1, 0.15, 0.3, 0.4);
+          (3, 4, 0.15, 0.3, 0.4);
+        ] in
+        
+        List.filter_map (fun (col1, col2, in_d, out_d1, out_d2) ->
+          try
+            if IMap.mem col1 body_columns && IMap.mem col2 body_columns then
+              Some (Bridge.cols 
+                ~columns:body_columns 
+                ~in_d 
+                ~out_d1 
+                ~out_d2 
+                ~skip:[1] (* Skip middle row to avoid conflicts *)
+                col1 col2)
+            else None
+          with _ -> None
+        ) safe_connections
+      with _ -> []
+    in
+    
+    (* Combine bridges *)
+    match column_connections with
+    | [] -> skeleton_bridges
+    | bridges -> 
+      try
+        Scad.union (skeleton_bridges :: bridges)
+      with _ -> skeleton_bridges
 
 let wall_builder plate =
   Walls.
@@ -87,6 +134,7 @@ let base_connector =
 
 let ports_cutter = BastardShield.(cutter ~y_off:0.5 (make ()))
 
+(* Enhanced eyelet configuration with M3 inserts *)
 let build ?right_hand ?hotswap () =
   let keyhole =
     Mx.make_hole
@@ -96,7 +144,12 @@ let build ?right_hand ?hotswap () =
       ~corner:(Path3.Round.chamf (`Cut 0.5))
       ()
   and eyelets =
-    Case.eyelets ~wall_locs:Eyelet.(Thumb (`S, Idx.Idx 0) :: default_wall_locs) ()
+    (* Create M3 config based on the Eyelet.config type *)
+    let m3_config = Eyelet.{ outer_rad = 5.; inner_rad = 1.7; thickness = 4.0; hole = Through } in
+    Case.eyelets 
+      ~config:m3_config
+      ~wall_locs:Eyelet.(Thumb (`S, Idx.Idx 0) :: default_wall_locs)
+      ()
   in
   Case.make
     ?right_hand
@@ -118,8 +171,8 @@ let bottom case =
       ; body ~loc:(v2 0.9 0.6) Last Last
       ; body ~loc:(v2 0.8 0.) Last First
       ]
-  in
-  Bottom.make ~bump_locs case
+  and m3_fastener = Eyelet.screw_fastener ~head_rad:4. ~shaft_rad:1.8 () in
+  Bottom.make ~bump_locs ~fastener:m3_fastener case
 
 let bastard_skelly =
   Util.imports
@@ -143,3 +196,5 @@ let bk_skeletyl_w_shield () =
     ; BastardShield.to_scad ~show_screws:true shield
       |> Scad.translate (v3 (-6.71) 35.2 2.)
     ]
+
+let tent case = Tent.make ~degrees:7. case

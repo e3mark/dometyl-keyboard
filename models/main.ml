@@ -15,11 +15,9 @@ let to_file name scad = Scad.to_file ~incl:true (name ^ ".scad") scad
    as you would a case with plain switch holes. Though you can also make bottoms/tent for
    left cases directly here as well. *)
 
-let splaytyl_right = Splaytyl.build ~hotswap:`South ()
-let splaytyl_left = Splaytyl.build ~hotswap:`South ~right_hand:false ()
+let dartyl_mx_jm_right = Skeletyl.build ()
 
 let () =
-  to_file "splaytyl_right" (Case.to_scad ~show_caps:false splaytyl_right);
-  to_file "splaytyl_left" (Case.to_scad splaytyl_left);
-  to_file "bottom_plate_right" (Splaytyl.bottom @@ splaytyl_right);
-  to_file "tent_right" (Tent.make splaytyl_right)
+  to_file "dartyl_mx_jm_right" (Case.to_scad ~show_caps:false dartyl_mx_jm_right);
+  to_file "bottom_plate_right" (Skeletyl.bottom @@ dartyl_mx_jm_right);
+  to_file "tent_right" (Skeletyl.tent dartyl_mx_jm_right)

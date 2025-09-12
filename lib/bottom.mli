@@ -37,6 +37,8 @@ val locate_bump : Plate.t -> bump_loc -> V2.t option
     - [thickness] sets the thickness of the plate in mm (default [= 1.65])
     - [bumpon_rad] sets the bumpon inset radius (default [= 5.5])
     - [bumpon_inset] sets how deep the bumpon insets should be (default [= 0.8])
+    - [upper_left_hole] enables/disables the upper left hole (default [= true])
+    - [upper_left_hole_diameter] sets the diameter of the upper left hole in mm (default [= 7.0])
     - if provided, [fastener] overrides the fastener information carried by the
       case *)
 val make
@@ -45,5 +47,7 @@ val make
   -> ?bumpon_rad:float
   -> ?bumpon_inset:float
   -> ?bump_locs:bump_loc list
+  -> ?upper_left_hole:bool
+  -> ?upper_left_hole_diameter:float
   -> Case.t
   -> Scad.d3

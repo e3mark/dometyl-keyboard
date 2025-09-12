@@ -1,20 +1,12 @@
-(** This is configuration is a mimicry of BastardKB's skeletyl keyboard.
-    (https://github.com/Bastardkb/Skeletyl).
-
-    This is is a good place to start from if you'd like to have something like the
-    skeletyl, but with some more pinky stagger. Though, it will never be as pretty.
-    
-    Enhanced version with comprehensive column connections for maximum structural integrity. *)
-
 open OCADml
 open OSCADml
 open Dometyl
 
-let body_lookups =
+(* let body_lookups =
   let offset = function
     | 2 -> v3 0. 3.5 (-5.) (* middle *)
     | 3 -> v3 1. (-2.5) 0.5 (* ring *)
-    | i when i >= 4 -> v3 0. (-12.) 7.7 (* pinky *)
+    | i when i >= 4 -> v3 0.5 (-18.) 8.5 (* pinky *)
     | 0 -> v3 (-2.5) 0. 5.
     | _ -> v3 0. 0. 0.
   and curve = function
@@ -32,12 +24,84 @@ let body_lookups =
     | _ -> 0.
   and splay _ = 0.
   and rows _ = 3 in
-  Plate.Lookups.body ~offset ~curve ~splay ~swing ~rows ()
+  Plate.Lookups.body ~offset ~curve ~splay ~swing ~rows () *)
+  
 
-let thumb_lookups =
-  let curve _ = Curvature.(curve ~fan:(fan ~radius:85. (Float.pi /. 12.5)) ()) in
-  Plate.Lookups.thumb ~curve ()
+  let body_lookups =
+    let offset = function
+      | 2 -> v3 0. 3.5 (-5.) (* middle *)
+      | 3 -> v3 1. (-2.5) 0.5 (* ring *)
+      | i when i >= 4 -> v3 0.5 (-16.) 8.5 (* pinky *)
+      | 0 -> v3 (-2.5) 0. 5.
+      | _ -> v3 0. 0. 0.
+    and curve = function
+      | i when i >= 3 ->
+        (* ring and pinky *)
+        Curvature.(curve ~well:(well ~radius:37. (Float.pi /. 4.25)) ())
+      | i when i = 0 ->
+        Curvature.(
+          curve ~well:(well ~tilt:(Float.pi /. 7.5) ~radius:46. (Float.pi /. 5.95)) () )
+      | _ -> Curvature.(curve ~well:(well ~radius:46.5 (Float.pi /. 6.1)) ())
+    and swing = function
+      | 2 -> Float.pi /. -48.
+      | 3 -> Float.pi /. -19.
+      | 4 -> Float.pi /. -14.
+      | _ -> 0.
+    and splay _ = 0.
+    and rows _ = 3 in
+    Plate.Lookups.body ~offset ~curve ~splay ~swing ~rows ()
+  
 
+
+
+  let thumb_lookups =
+    let curve _ = Curvature.(curve ~fan:(fan ~radius:85. (Float.pi /. 12.5)) ()) in
+    Plate.Lookups.thumb ~curve ()
+
+
+  (* let thumb_lookups =
+    let curve _ = 
+      (* Enhanced thumb curvature with both fan and well components *)
+      Curvature.(
+        curve 
+          ~fan:(fan ~radius:85. (Float.pi /. 12.5)) 
+          ~well:(well ~radius:55. (Float.pi /. 8.5)) 
+          ()
+      ) in
+    Plate.Lookups.thumb ~curve () *)
+
+    (* let thumb_lookups =
+      let curve _ = 
+        Curvature.(
+          curve 
+            ~well:(well ~radius:55. (Float.pi /. 8.5)) 
+            ()
+        ) in
+      Plate.Lookups.thumb ~curve () *)
+
+      (* let thumb_lookups =
+        let curve _ = 
+          Curvature.(
+            curve 
+              ~fan:(fan ~radius:120. (Float.pi /. 20.)) (* Gentler fan *)
+              ~well:(well ~radius:75. (Float.pi /. 12.)) (* Gentler well *)
+              ()
+          ) in
+        Plate.Lookups.thumb ~curve () *)
+
+(* Original position *)
+let original_thumb_offset = (v3 0.25 (-50.) (-1.))
+
+(* Step 1: Move 2mm inward first - ok*)
+let thumb_offset_2mm_in = (v3 (1.75) (-50.) (-1.))  (* 0.25 - 2.0 = -1.75 *)
+
+(* Step 2: Move 4mm inward if 2mm works - ok*)
+let thumb_offset_4mm_in = (v3 (3.75) (-50.) (-1.))  (* 0.25 - 4.0 = -3.75 *)
+
+(* Step 3: Full 4mm inward *)
+let thumb_offset_4xmm_in = (v3 (4.) (-50.) (-1.))  (* 0.25 - 6.0 = -5.75 *)
+
+(* Test configuration - start with 2mm *)
 let plate_builder =
   Plate.make
     ~n_body_cols:5
@@ -45,7 +109,7 @@ let plate_builder =
     ~tent:(Float.pi /. 10.)
     ~body_lookups
     ~thumb_lookups
-    ~thumb_offset:(v3 0.25 (-50.) (-1.))
+    ~thumb_offset:thumb_offset_4xmm_in  (* Start here *)
     ~thumb_angle:Float.(v3 0. (pi /. -4.3) (pi /. 6.))
 
 (* Enhanced plate welder with comprehensive column connections *)
@@ -121,16 +185,19 @@ let wall_builder plate =
           plate
     }
 
-let base_connector =
+(* let base_connector =
   Connect.skeleton
     ~fn:64
     ~height:9.
     ~spline_d:1.5
     ~index_height:16.
-    ~thumb_height:14.
+    ~thumb_height:16.
     ~close_thumb:false
     ~corner:(Path3.Round.chamf (`Cut 0.5))
-    ~north_joins:(Fun.const true)
+    ~north_joins:(Fun.const true) *)
+
+    let base_connector =
+      Connect.skeleton ~height:9. ~index_height:15. ~thumb_height:17. ~fn:64 ~close_thumb:false
 
 let ports_cutter = BastardShield.(cutter ~y_off:0.5 (make ()))
 
@@ -164,14 +231,15 @@ let build ?right_hand ?hotswap () =
 let bottom case =
   let bump_locs =
     Bottom.
-      [ thumb ~loc:(v2 0. 0.5) Last First
+      [thumb ~loc:(v2 0. 0.5) Last First
+      (*
       ; thumb ~loc:(v2 0.7 0.) Last Last
       ; body ~loc:(v2 0.1 0.9) First Last
       ; body ~loc:(v2 0.5 1.) (Idx 3) Last
       ; body ~loc:(v2 0.9 0.6) Last Last
-      ; body ~loc:(v2 0.8 0.) Last First
+      ; body ~loc:(v2 0.8 0.) Last First *)
       ]
-  and m3_fastener = Eyelet.screw_fastener ~head_rad:4. ~shaft_rad:1.8 () in
+  and m3_fastener = Eyelet.screw_fastener ~head_rad:4. ~shaft_rad:4. () in
   Bottom.make ~bump_locs ~fastener:m3_fastener case
 
 let bastard_skelly =
@@ -197,4 +265,4 @@ let bk_skeletyl_w_shield () =
       |> Scad.translate (v3 (-6.71) 35.2 2.)
     ]
 
-let tent case = Tent.make ~degrees:7. case
+let tent case = Tent.make ~degrees:10. case

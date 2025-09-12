@@ -44,8 +44,10 @@ let prison
     ; fillet_d
     ; fillet_w
     }
+(* 
+let default_bumps = [ 0.; 0.15; 0.3; 0.4; 0.5; 0.77; 0.9 ] *)
 
-let default_bumps = [ 0.; 0.15; 0.3; 0.4; 0.5; 0.77; 0.9 ]
+let default_bumps = [ ]
 
 let solid_shell bot_outer bot_inner top_outer top_inner =
   let outer = Mesh.skin_between ~slices:3 bot_outer top_outer

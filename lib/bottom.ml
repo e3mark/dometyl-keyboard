@@ -46,6 +46,8 @@ let make
     ?(bumpon_rad = 5.5)
     ?(bumpon_inset = 0.8)
     ?(bump_locs = default_bumps)
+    ?(upper_left_hole = true)
+    ?(upper_left_hole_diameter = 30.0)
     case
   =
   let screw_config =
@@ -104,10 +106,22 @@ let make
       >> Option.map (Fun.flip Scad.translate cut) )
       bump_locs
     |> Scad.union3
+  and upper_left_hole_shape =
+    if upper_left_hole then
+      let outline_points = Connect.outline_2d case.connections in
+      let min_x = List.fold_left (fun acc pt -> Float.min acc (V2.x pt)) Float.max_float outline_points in
+      let max_y = List.fold_left (fun acc pt -> Float.max acc (V2.y pt)) Float.neg_infinity outline_points in
+      let hole_pos = v2 (min_x +. 45.0) (max_y -. 25.0) in  (* 10mm offset from edges *)
+      let hole_rad = upper_left_hole_diameter /. 2.0 in
+      [ Scad.translate (V3.of_v2 hole_pos) 
+        @@ Scad.ztrans (-0.05) 
+        @@ Scad.cylinder ~fn:32 ~height:(thickness +. 0.1) hole_rad ]
+    else
+      []
   in
   let plate =
     Scad.polygon (Connect.outline_2d case.connections) |> Scad.extrude ~height:thickness
   in
   Scad.difference
     plate
-    (insets :: List.map (fun l -> Scad.translate l.Eyelet.centre screw_hole) case.eyelets)
+    (insets :: upper_left_hole_shape @ List.map (fun l -> Scad.translate l.Eyelet.centre screw_hole) case.eyelets)

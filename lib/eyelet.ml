@@ -200,10 +200,11 @@ let place
 
 let default_wall_locs =
   Idx.
-    [ Body (`W, First)
+    [ 
+      Body (`W, First)
     ; Body (`N, Idx 2)
     ; Body (`N, Last)
-    ; Body (`S, Idx 3)
+    ; Body (`S, Last)
     ; Thumb (`W, Last)
     ]
 

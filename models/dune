@@ -1,6 +1,6 @@
 (executable
  (name main)
- (libraries dometyl examples))
+ (libraries dometyl du30))
 
 ; Convenience rule/alias for building and running examples (promoted to models/scads diectory)
 ; This pattern enables automatic scad re-generation on changes with `dune build -w @run`.
@@ -21,7 +21,7 @@
    "scads"
    (run %{runner} %{scads}))))
 
-; Export scad examples to stl.
+; Export scad du30 to stl.
 
 (rule
  (alias export_models)

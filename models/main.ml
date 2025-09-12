@@ -1,7 +1,7 @@
 open! OCADml
 open OSCADml
 open! Dometyl
-open! Examples
+open! Du30
 
 (* It is recommended to use the "<include> trick" for models produced by dometyl
     for OpenSCAD editor related performance reasons. This will generate an
@@ -15,9 +15,17 @@ let to_file name scad = Scad.to_file ~incl:true (name ^ ".scad") scad
    as you would a case with plain switch holes. Though you can also make bottoms/tent for
    left cases directly here as well. *)
 
-let dartyl_mx_jm_right = Skeletyl.build ()
+(* let du30_mx_right = Du36_mx.build ()
 
 let () =
-  to_file "dartyl_mx_jm_right" (Case.to_scad ~show_caps:false dartyl_mx_jm_right);
-  to_file "bottom_plate_right" (Skeletyl.bottom @@ dartyl_mx_jm_right);
-  to_file "tent_right" (Skeletyl.tent dartyl_mx_jm_right)
+  to_file "du30_mx_right" (Case.to_scad ~show_caps:false du30_mx_right);
+  to_file "bottom_plate_right" (Du36_mx.bottom @@ du30_mx_right);
+  to_file "tent_right" (Du36_mx.tent du30_mx_right) *)
+
+
+let du30_mx_right = Du34_mx.build ()
+
+let () =
+  to_file "du30_mx_right" (Case.to_scad ~show_caps:false du30_mx_right);
+  to_file "bottom_plate_right" (Du34_mx.bottom @@ du30_mx_right);
+  to_file "tent_right" (Du34_mx.tent du30_mx_right)

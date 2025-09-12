@@ -1,0 +1,3 @@
+(library
+ (name du30)
+ (libraries OCADml OSCADml dometyl))

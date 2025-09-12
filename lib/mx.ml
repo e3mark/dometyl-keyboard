@@ -96,12 +96,12 @@ module Hotswap = struct
     else swap
 end
 
-let teeth ~inner_h ~thickness hole =
-  let block = Scad.cube ~center:true (v3 5. 0.51 (thickness -. 1.3))
-  and y = (inner_h /. 2.) +. 0.25 in
-  let north = Scad.translate (v3 0. y (-1.3)) block
-  and south = Scad.translate (v3 0. (-.y) (-1.3)) block in
-  Scad.difference hole [ north; south ]
+  let teeth ~inner_h ~thickness hole =
+    let block = Scad.cube ~center:true (v3 14.35 4. (thickness -. 2.1))
+    and y = (inner_h /. 2.) +. 0.25 in
+    let north = Scad.translate (v3 0. y (-3.3)) block
+    and south = Scad.translate (v3 0. (-.y) (-3.3)) block in
+    Scad.difference hole [ north; south ]
 
 let make_hole
     ?render

@@ -120,11 +120,11 @@ let wall_builder plate =
             | 0 -> true
             | 1 -> true
             | _ -> false )
-          ~east_lookup:(fun row ->
+          (* ~east_lookup:(fun row ->
             match row with
             | 0 -> true
             | 1 -> true
-            | _ -> false )
+            | _ -> false ) *)
           plate
     ; thumb =
         auto_thumb

@@ -1,12 +1,12 @@
 open OCADml
 open OSCADml
 
-let path n = Printf.sprintf "%s/stls/caps/%s" Util.imports n
-let color = Scad.color Color.DarkSlateBlue
+let path n = Printf.sprintf "%s/stls/%s" Util.imports n
+let color = Scad.color Color.Pink
 
 module SA = struct
   (* Generated with https://github.com/rsheldiii/KeyV2 *)
-  let path n = path (Printf.sprintf "KeyV2_SA/SA-%s.stl" n)
+  let path n = path (Printf.sprintf "SA-%s.stl" n)
   let r0 = Scad.import3 (path "R0") |> color
   let r2 = Scad.import3 (path "R2") |> color
   let r3 = Scad.import3 (path "R3") |> color
@@ -24,7 +24,7 @@ end
 
 module MT3 = struct
   (* STLs released by the designer matt3o (https://matt3o.com/) *)
-  let path n = path (Printf.sprintf "MT3/MT3-%s.stl" n)
+  let path n = path (Printf.sprintf "MT3-%s.stl" n)
   let space_1u = Scad.import3 (path "1u-space") |> color
   let space_1_25u = Scad.import3 (path "1.25u-space") |> color
   let space_1_5u = Scad.import3 (path "1.5u-space") |> color
@@ -38,7 +38,7 @@ module Matty3 = struct
      NOTE: Be mindful of clearance between the keys. The shape of real MT3 caps
      seem to have a bit more of a bulge. These can be close to touching (but not
      quite) and the caps will rub irl. *)
-  let path n = path (Printf.sprintf "KeyV2_matty3/matty3-deep-%s.stl" n)
+  let path n = path (Printf.sprintf "matty3-deep-%s.stl" n)
   let r0 = Scad.import3 (path "R0") |> color
   let r1 = Scad.import3 (path "R1") |> color
   let r2 = Scad.import3 (path "R2") |> color
@@ -63,7 +63,7 @@ end
 
 module Cherry = struct
   (* Generated with https://github.com/rsheldiii/KeyV2 *)
-  let path n = path (Printf.sprintf "KeyV2_cherry/cherry-%s.stl" n)
+  let path n = path (Printf.sprintf "cherry-%s.stl" n)
   let r0 = Scad.import3 (path "R0") |> color
   let r2 = Scad.import3 (path "R2") |> color
   let r3 = Scad.import3 (path "R3") |> color
@@ -78,7 +78,7 @@ end
 
 module OEM = struct
   (* Generated with https://github.com/rsheldiii/KeyV2 *)
-  let path n = path (Printf.sprintf "KeyV2_OEM/OEM-%s.stl" n)
+  let path n = path (Printf.sprintf "OEM-%s.stl" n)
   let r1 = Scad.import3 (path "R1") |> color
   let r2 = Scad.import3 (path "R2") |> color
   let r3 = Scad.import3 (path "R3") |> color

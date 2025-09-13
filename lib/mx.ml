@@ -97,7 +97,7 @@ module Hotswap = struct
 end
 
   let teeth ~inner_h ~thickness hole =
-    let block = Scad.cube ~center:true (v3 14.35 4. (thickness -. 2.1))
+    let block = Scad.cube ~center:true (v3 12.35 4. (thickness -. 1.1))
     and y = (inner_h /. 2.) +. 0.25 in
     let north = Scad.translate (v3 0. y (-3.3)) block
     and south = Scad.translate (v3 0. (-.y) (-3.3)) block in

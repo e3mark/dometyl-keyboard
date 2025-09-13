@@ -11,8 +11,8 @@ let body_lookups =
     | _ -> v3 0. 0. 0. *)
   let offset = function
     | 2 -> v3 1. 3.5 (-5.) (* middle *)
-    | 3 -> v3 2. (-2.5) 0.5 (* ring *)
-    | i when i >= 4 -> v3 1.5 (-16.) 8.5 (* pinky *)
+    | 3 -> v3 3.5 (-2.5) 0.5 (* ring *)
+    | i when i >= 4 -> v3 2. (-18.) 8.5 (* pinky *)
     | 0 -> v3 (-3.5) 0. 5.
     | _ -> v3 0. 0. 0.
   and curve = function
@@ -71,12 +71,12 @@ let plate_builder =
     (* ~thumb_angle:Float.(v3 0. (pi /. -4.3) (pi /. 6.)) *)
     ~thumb_angle:Float.(v3 0. (pi /. -4.3) (pi /. 20.))
 
-    (* ~caps:Caps.Matty3.row
-    ~thumb_caps:Caps.MT3.thumb_1u *)
+    ~caps:Caps.Matty3.row
+    ~thumb_caps:Caps.MT3.thumb_1u
 
     (* ~caps:Caps.Cherry.row *)
 
-    ~caps:Caps.OEM.row
+    (* ~caps:Caps.OEM.row *)
 
 (* Enhanced plate welder with comprehensive column connections *)
 let plate_welder =

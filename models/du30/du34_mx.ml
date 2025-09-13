@@ -17,13 +17,17 @@ let body_lookups =
     | _ -> v3 0. 0. 0.
   and curve = function
     | i when i >= 3 ->
-      (* ring and pinky  *)
+      (* ring and pinky: 4.2 is mt3 compatible  *)
       (* Curvature.(curve ~well:(well ~radius:37. (Float.pi /. 4.85)) ()) *)
-      Curvature.(curve ~well:(well ~radius:37. (Float.pi /. 4.35)) ())
+      Curvature.(curve ~well:(well ~radius:37. (Float.pi /. 4.2)) ())
     | i when i = 0 ->
-      Curvature.(
-        curve ~well:(well ~tilt:(Float.pi /. 7.5) ~radius:46. (Float.pi /. 5.95)) () )
-    | _ -> Curvature.(curve ~well:(well ~radius:46.5 (Float.pi /. 6.1)) ())
+      (* outer index: 5.5 is mt3 compatible  *)
+      (* Curvature.(curve ~well:(well ~tilt:(Float.pi /. 7.5) ~radius:46. (Float.pi /. 5.95)) () ) *)
+      Curvature.(curve ~well:(well ~tilt:(Float.pi /. 7.5) ~radius:46. (Float.pi /. 5.5)) () )
+    | _ -> 
+      (* inner index and middle: 5.8 is mt3 compatible  *)
+      (* Curvature.(curve ~well:(well ~radius:46.5 (Float.pi /. 6.1)) ()) *)
+      Curvature.(curve ~well:(well ~radius:46.5 (Float.pi /. 5.8)) ())
   and swing = function
     | 2 -> Float.pi /. -48.
     | 3 -> Float.pi /. -19.
@@ -38,9 +42,15 @@ let body_lookups =
 
 let thumb_lookups =
   let curve _ =
-    Curvature.(
+    (* thumbs: 5.8 is mt3 compatible  *)
+    (* Curvature.(
       curve
         ~fan:(fan ~radius:70. ~tilt:(Float.pi /. 48.) (Float.pi /. 9.))
+        ~well:(well ~radius:47. (Float.pi /. 7.5))
+        () ) *)
+    Curvature.(
+      curve
+        ~fan:(fan ~radius:74. ~tilt:(Float.pi /. 48.) (Float.pi /. 9.))
         ~well:(well ~radius:47. (Float.pi /. 7.5))
         () )
   and rows _ = 2 in
@@ -61,10 +71,12 @@ let plate_builder =
     (* ~thumb_angle:Float.(v3 0. (pi /. -4.3) (pi /. 6.)) *)
     ~thumb_angle:Float.(v3 0. (pi /. -4.3) (pi /. 20.))
 
-    (* ~caps:Caps.Matty3.row
-    ~thumb_caps:Caps.MT3.thumb_1u *)
+    ~caps:Caps.Matty3.row
+    ~thumb_caps:Caps.MT3.thumb_1u
 
-    ~caps:Caps.OEM.row
+    (* ~caps:Caps.SA.row *)
+
+    (* ~caps:Caps.OEM.row *)
 
 (* Enhanced plate welder with comprehensive column connections *)
 let plate_welder =

@@ -42,7 +42,7 @@ let body_lookups =
 
 let thumb_lookups =
   let curve _ =
-    (* thumbs: 5.8 is mt3 compatible  *)
+    (* thumbs: fan ~radius:74 is mt3 compatible  *)
     (* Curvature.(
       curve
         ~fan:(fan ~radius:70. ~tilt:(Float.pi /. 48.) (Float.pi /. 9.))
@@ -50,7 +50,7 @@ let thumb_lookups =
         () ) *)
     Curvature.(
       curve
-        ~fan:(fan ~radius:74. ~tilt:(Float.pi /. 48.) (Float.pi /. 9.))
+        ~fan:(fan ~radius:73. ~tilt:(Float.pi /. 48.) (Float.pi /. 9.))
         ~well:(well ~radius:47. (Float.pi /. 7.5))
         () )
   and rows _ = 2 in
@@ -71,12 +71,12 @@ let plate_builder =
     (* ~thumb_angle:Float.(v3 0. (pi /. -4.3) (pi /. 6.)) *)
     ~thumb_angle:Float.(v3 0. (pi /. -4.3) (pi /. 20.))
 
-    ~caps:Caps.Matty3.row
-    ~thumb_caps:Caps.MT3.thumb_1u
+    (* ~caps:Caps.Matty3.row
+    ~thumb_caps:Caps.MT3.thumb_1u *)
 
-    (* ~caps:Caps.SA.row *)
+    (* ~caps:Caps.Cherry.row *)
 
-    (* ~caps:Caps.OEM.row *)
+    ~caps:Caps.OEM.row
 
 (* Enhanced plate welder with comprehensive column connections *)
 let plate_welder =

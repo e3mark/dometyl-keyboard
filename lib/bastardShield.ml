@@ -132,11 +132,13 @@ let place
   in
   zrot z_rot t |> translate (v3 x y z_off)
 
-let eyelets
+  let m3_config = Eyelet.{ outer_rad = 5.; inner_rad = 1.7; thickness = 4.0; hole = Through }
+
+  let eyelets
     ?width
     ?(bury = 0.3)
     ?(z_off = 1.)
-    ?(config = Eyelet.m4_config)
+    ?(config = m3_config)
     Connect.{ inline; outline; _ }
     { screw_l; screw_r; thickness; _ }
   =

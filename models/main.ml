@@ -26,6 +26,6 @@ let () =
 let du30_mx_right = Du34_mx.build ()
 
 let () =
-  to_file "du30_mx_right" (Case.to_scad ~show_caps:true du30_mx_right);
+  to_file "du30_mx_right" (Case.to_scad ~show_caps:false du30_mx_right);
   to_file "bottom_plate_right" (Du34_mx.bottom @@ du30_mx_right);
   to_file "tent_right" (Du34_mx.tent du30_mx_right)
